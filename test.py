@@ -32,9 +32,3 @@ for key, value in xiangting.items():
     print(key, value)
 
 
-
-t = 1
-for _ in range(14):
-    t *= 2
-t *= 10*6*2
-print(t)
