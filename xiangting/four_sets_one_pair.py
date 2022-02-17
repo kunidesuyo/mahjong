@@ -35,6 +35,7 @@ class FourSetsOnePair(object):
 
     def dfs(self, tiles):
         '''
+        塔子オーバーの特殊な形で正しく動作しなかったので使わない
         数牌(萬子索子筒子)に対する面子とターツの数を返す関数
         順子 t012
         刻子 t000
@@ -277,7 +278,7 @@ class FourSetsOnePair(object):
             kazuhai.append(self.mytiles[i].copy())
         # r_ts = self.dfs2(self.mytiles[0:3].copy()).copy() なぜか参照渡しになる
         r_ts = self.dfs2(kazuhai).copy()
-        print("r_ts: ", r_ts)
+        # print("r_ts: ", r_ts)
         for key, value in r_ts.items():
             ts[key] += value
         # 字牌
