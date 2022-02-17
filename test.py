@@ -31,4 +31,3 @@ xiangting = calculate_number_of_xiangting(mytiles)
 for key, value in xiangting.items():
     print(key, value)
 
-
