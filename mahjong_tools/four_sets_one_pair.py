@@ -286,5 +286,7 @@ class FourSetsOnePair(object):
         for key, value in r_ts.items():
             ts[key] += value
         # print(ts)
+        # print(self.mytiles)
+        # print(ts)
 
         return self.xiangting_from_ts(ts)

@@ -1,6 +1,6 @@
-from xiangting.thirteen_orphans import ThirteenOrphans
-from xiangting.four_sets_one_pair import FourSetsOnePair
-from xiangting.seven_pairs import SevenPairs
+from mahjong_tools.thirteen_orphans import ThirteenOrphans
+from mahjong_tools.four_sets_one_pair import FourSetsOnePair
+from mahjong_tools.seven_pairs import SevenPairs
 
 def calculate_number_of_xiangting(mytiles):
     '''

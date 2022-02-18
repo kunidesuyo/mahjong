@@ -1,4 +1,6 @@
-from xiangting.xiangting import calculate_number_of_xiangting
+from mahjong_tools.xiangting import calculate_number_of_xiangting
+from mahjong_tools import hand_optimize as ho
+import time
 
 
 mytiles = []
@@ -8,6 +10,21 @@ for i in range(3):
     mytiles.append(a.copy())
 mytiles.append(b.copy())
 
+# ch = {'m': 0, 'p': 1, 's': 2, 'z': 3}
+# print(ch.items())
+
+# result = {
+#     "1m": [3, [1, "s"], [2, "s"]], 
+#     "2m": [2, [1, "s"], [2, "s"], [3, "s"]],
+#     "3m": [2, [1, "s"], [2, "s"]] 
+# }
+# print(result)
+
+# sorted_result = ho.sort_output(result)
+
+# print(sorted_result)
+
+# exit()
 
 with open('hand.txt', 'r') as f:
     input_tiles = f.read()
@@ -24,7 +41,8 @@ with open('hand.txt', 'r') as f:
         mytiles[c][num] += 1
 
     print(mytiles)
-    xiangting = calculate_number_of_xiangting(mytiles)
-    for key, value in xiangting.items():
-        print(key, value)
-
+    start = time.time()
+    result = ho.hand_optimize(mytiles, output_sorted_data=True)
+    end = time.time()
+    print(end - start)
+    print(result)

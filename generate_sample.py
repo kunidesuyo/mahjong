@@ -1,4 +1,4 @@
-from xiangting.four_sets_one_pair import FourSetsOnePair
+from mahjong_tools.four_sets_one_pair import FourSetsOnePair
 import time
 
 def generate_sample():
