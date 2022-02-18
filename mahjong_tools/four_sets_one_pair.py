@@ -3,6 +3,7 @@ class FourSetsOnePair(object):
     def __init__(self, mytiles):
         self.memo = {}
         self.mytiles = mytiles
+        self.call_dfs = 0
 
 
     def ts_init(self):
@@ -146,6 +147,7 @@ class FourSetsOnePair(object):
         return tiles
 
     def dfs2(self, tiles):
+        self.call_dfs += 1
         '''
         数牌(萬子索子筒子)に対する面子とターツの数を返す関数
         順子 t012
@@ -265,8 +267,26 @@ class FourSetsOnePair(object):
         return ts
 
 
+    def preprocessing_mytiles(self):
+        # 孤立牌の除去
+        for i in range(3):
+            for j in range(9):
+                if self.mytiles[i][j] == 1:
+                    is_isolation = True
+                    for dj in [-2, -1, 1, 2]:
+                        now_j = j + dj
+                        if not (0 <= now_j and now_j < 9):
+                            continue
+                        else:
+                            if self.mytiles[i][now_j] > 0:
+                                is_isolation = False
+                    if is_isolation == True:
+                        self.mytiles[i][j] = 0
+
+
     def calculation_xiangting(self):
         ts = self.ts_init()
+        self.preprocessing_mytiles()
         # 数牌
         # for i in range(3):
         #     r_ts = self.dfs(self.mytiles[i]).copy()
@@ -288,5 +308,5 @@ class FourSetsOnePair(object):
         # print(ts)
         # print(self.mytiles)
         # print(ts)
-
+        print("call dfs: ", self.call_dfs)
         return self.xiangting_from_ts(ts)

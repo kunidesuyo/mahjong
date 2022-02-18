@@ -24,9 +24,13 @@ mytiles.append(b.copy())
 
 # print(sorted_result)
 
+# for i in range(-2, 3, 1):
+#     print(i)
+
 # exit()
 
-with open('hand.txt', 'r') as f:
+#with open('hand.txt', 'r') as f:
+with open('churen.txt', 'r') as f:
     input_tiles = f.read()
 
     if len(input_tiles) != 13*2 and len(input_tiles) != 14*2:
@@ -42,7 +46,15 @@ with open('hand.txt', 'r') as f:
 
     print(mytiles)
     start = time.time()
-    result = ho.hand_optimize(mytiles, output_sorted_data=True)
+    xia = calculate_number_of_xiangting(mytiles)
     end = time.time()
-    print(end - start)
-    print(result)
+    print("time ", end-start, "s")
+    for key, value in xia.items():
+        print(key, value)
+    
+    # print(mytiles)
+    # start = time.time()
+    # result = ho.hand_optimize(mytiles, output_sorted_data=True)
+    # end = time.time()
+    # print(end - start)
+    # print(result)
