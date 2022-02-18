@@ -259,9 +259,9 @@ class FourSetsOnePair(object):
         tiles = self.mytiles[3]
         for tile in tiles:
             if tile >= 3:
-                ts["i000"] += 1
+                ts["t000"] += 1
             elif tile == 2:
-                ts["i00"] += 1
+                ts["t00"] += 1
         return ts
 
 
