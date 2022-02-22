@@ -2,7 +2,9 @@ class FourSetsOnePair(object):
 
     def __init__(self, mytiles):
         self.memo = {}
-        self.mytiles = mytiles
+        self.mytiles = []
+        for x in mytiles:
+            self.mytiles.append(x.copy())
         self.call_dfs = 0
 
 

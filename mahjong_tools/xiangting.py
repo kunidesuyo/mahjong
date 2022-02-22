@@ -13,7 +13,6 @@ def calculate_number_of_xiangting(mytiles):
     13 - (ヤオチュウ牌の種類数) - min(ヤオチュウ牌のトイツ数, 1)
     '''
     # mytilesの形式チェック追加予定
-    
     xiangting = {}
     four_sets_one_pair = FourSetsOnePair(mytiles)
     xiangting["four_sets_one_pair"] = four_sets_one_pair.calculation_xiangting()

@@ -30,6 +30,20 @@ def minimum_test():
         # 七対子
         # 国士無双
     ]
+
+    thirteen_orphans_file_list =[
+        '13orphans.txt',
+        '13orphans0.txt',
+        '13orphans0_pair.txt',
+        '13orphans1.txt',
+        '13orphans1_pair.txt',
+        '13orphans2.txt',
+        '13orphans2_pair.txt',
+        '13orphans3.txt',
+        '13orphans3_pair.txt',
+        '13orphans4.txt',
+        '13orphans4_pair.txt',
+    ]
     # 1m1m1m1m2m3m4m5m6m7m8m9m9m9m -1
     # file_list = ['churen.txt']
     # for file_name in file_list:
@@ -44,7 +58,7 @@ def minimum_test():
         now_hand = []
         for t in init_tiles:
             now_hand.append(t.copy())
-        with open("test_data\\" + file_name, 'r') as f:
+        with open("test_data\\four_sets_one_pair\\" + file_name, 'r') as f:
             input_data = f.read()
             input_tiles, true_v = input_data.split()
             true_v = int(true_v)
@@ -62,16 +76,60 @@ def minimum_test():
                 c = ch[input_tiles[2*i+1]]
                 now_hand[c][num] += 1
 
-            FSOP = four_sets_one_pair.FourSetsOnePair(now_hand)
+            # FSOP = four_sets_one_pair.FourSetsOnePair(now_hand)
 
             print(now_hand)
             start = time.time()
-            xia = FSOP.calculation_xiangting()
+            xia = calculate_number_of_xiangting(now_hand)
+            end = time.time()
+            result = 20
+            for key, value in xia.items():
+                result = min(result, value)
+            print("time ", end-start, "s")
+            print("calculation result: ", result)
+            print("true value: ", true_v)
+            if result == true_v:
+                correct_count += 1
+            else:
+                incorrect_data.append(file_name)
+
+    for file_name in thirteen_orphans_file_list:
+        count += 1
+        now_hand = []
+        for t in init_tiles:
+            now_hand.append(t.copy())
+        with open("test_data\\thirteen_orphans\\" + file_name, 'r') as f:
+            input_data = f.read()
+            input_tiles, true_v = input_data.split()
+            true_v = int(true_v)
+            #print(input_tiles, true_v)
+            #exit()
+
+            if len(input_tiles) != 13*2 and len(input_tiles) != 14*2:
+                print("invalid input")
+                exit()
+
+            ch = {'m': 0, 'p': 1, 's': 2, 'z': 3}
+
+            for i in range(len(input_tiles)//2):
+                num = int(input_tiles[2*i]) - 1
+                c = ch[input_tiles[2*i+1]]
+                now_hand[c][num] += 1
+
+            # FSOP = four_sets_one_pair.FourSetsOnePair(now_hand)
+
+            print(now_hand)
+            start = time.time()
+            xia = calculate_number_of_xiangting(now_hand)
+            print(xia)
+            result = 20
+            for key, value in xia.items():
+                result = min(result, value)
             end = time.time()
             print("time ", end-start, "s")
-            print("calculation result: ", xia)
+            print("calculation result: ", result)
             print("true value: ", true_v)
-            if xia == true_v:
+            if result == true_v:
                 correct_count += 1
             else:
                 incorrect_data.append(file_name)
