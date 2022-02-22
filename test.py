@@ -31,9 +31,9 @@ def test1():
 
     # exit()
 
-    # with open('hand.txt', 'r') as f:
-    #with open('churen.txt', 'r') as f:
-    with open('t_over.txt', 'r') as f:
+    #with open('hand.txt', 'r') as f:
+    with open('churen.txt', 'r') as f:
+    #with open('t_over.txt', 'r') as f:
         input_tiles = f.read()
 
         if len(input_tiles) != 13*2 and len(input_tiles) != 14*2:
