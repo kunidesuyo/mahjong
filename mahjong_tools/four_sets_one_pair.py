@@ -146,6 +146,19 @@ class FourSetsOnePair(object):
                 num //= base
         return tiles
 
+
+    def get_mt_from_ts(self, ts):
+        m = 0
+        t = 0
+        for key, value in ts.items():
+            if len(key) == 4:
+                m += 1
+            elif len(key) == 3:
+                t += 1
+        return [m, t]
+
+
+
     def dfs2(self, tiles):
         self.call_dfs += 1
         '''
@@ -250,7 +263,134 @@ class FourSetsOnePair(object):
         self.memo[key_of_tiles] = ret_ts.copy()
         return self.memo[key_of_tiles]
     
-    
+
+    def dfs3(self, tiles):
+        self.call_dfs += 1
+        '''
+        数牌(萬子索子筒子)に対する面子とターツの数を返す関数
+        順子 t012
+        刻子 t000
+        対子 t00
+        両面(辺張) t01
+        嵌張 t02
+        '''
+        # メモ化再帰
+        # 辞書型のkeyにlist型は設定できない
+        # if tiles in memo:
+        #    return memo[tiles]
+
+        # tile_structure = {"t012": 0, "t000": 0, "t00": 0, "t01": 0, "t02": 0}
+        key_of_tiles = self.key_encoder(tiles)
+        if key_of_tiles in self.memo:
+            return self.memo[key_of_tiles]
+        tss = []
+        for i in range(3):
+            # 同じ色の牌でできる最高の面子数と塔子数を求める
+            n_tiles = 0
+            max_m = 0
+            max_t = 0
+            for j in range(9):
+                n_tiles += tiles[i][j]
+            max_m = n_tiles // 3
+            if n_tiles % 3 == 2:
+                max_t = 1
+            max_mt = [max_m, max_t]
+            get_max_result = False
+            for j in range(9):
+                if tiles[i][j] > 0:
+                    # 順子
+                    # next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    if j+2 < 9 and tiles[i][j+1] > 0 and tiles[i][j+2] > 0:
+                        next_tiles[i][j] -= 1
+                        next_tiles[i][j+1] -= 1
+                        next_tiles[i][j+2] -= 1
+                        now_ts = self.dfs2(next_tiles.copy()).copy()
+                        now_ts["t012"] += 1
+                        tss.append(now_ts)
+                        now_mt = self.get_mt_from_ts(now_ts)
+                        if now_mt == max_mt:
+                            get_max_result = True
+                    if get_max_result == True:
+                        break
+                    # 刻子
+                    #next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    if tiles[i][j] >= 3:
+                        next_tiles[i][j] -= 3
+                        now_ts = self.dfs2(next_tiles.copy()).copy()
+                        now_ts["t000"] += 1
+                        tss.append(now_ts)
+                        now_mt = self.get_mt_from_ts(now_ts)
+                        if now_mt == max_mt:
+                            get_max_result = True
+                    if get_max_result == True:
+                        break
+                    # 対子
+                    # next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    if tiles[i][j] >= 2:
+                        next_tiles[i][j] -= 2
+                        now_ts = self.dfs2(next_tiles.copy()).copy()
+                        now_ts["t00"] += 1
+                        tss.append(now_ts)
+                    # 両面(辺張)ターツ
+                    # next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    if j+1 < 9 and tiles[i][j+1] > 0:
+                        next_tiles[i][j] -= 1
+                        next_tiles[i][j+1] -= 1
+                        now_ts = self.dfs2(next_tiles.copy()).copy()
+                        now_ts["t01"] += 1
+                        tss.append(now_ts)
+                    # 嵌張ターツ
+                    # next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    if j+2 < 9 and tiles[i][j+2] > 0:
+                        next_tiles[i][j] -= 1
+                        next_tiles[i][j+2] -= 1
+                        now_ts = self.dfs2(next_tiles.copy()).copy()
+                        now_ts["t02"] += 1
+                        tss.append(now_ts)
+                    # 孤立
+                    # next_tiles = tiles.copy()
+                    next_tiles = []
+                    for k in range(3):
+                        next_tiles.append(tiles[k].copy())
+                    next_tiles[i][j] = 0
+                    now_ts = self.dfs2(next_tiles.copy()).copy()
+                    tss.append(now_ts)
+                if get_max_result == True:
+                    break
+
+        ret_ts = self.ts_init()
+        min_shanten = 8
+        for ts in tss:
+            now_shanten = self.xiangting_from_ts(ts)
+            if min_shanten > now_shanten:
+                ret_ts = ts.copy()
+                min_shanten = now_shanten
+            elif min_shanten == now_shanten:
+                if ret_ts["t00"] < ts["t00"]:
+                    ret_ts = ts.copy()
+                    min_shanten = now_shanten
+
+        # print("tiles: ", tiles)
+        # print("ret_ts: ", ret_ts)
+
+        self.memo[key_of_tiles] = ret_ts.copy()
+        return self.memo[key_of_tiles]
+
 
 
     def honours_ts(self):
@@ -284,7 +424,7 @@ class FourSetsOnePair(object):
                         self.mytiles[i][j] = 0
 
 
-    def calculation_xiangting(self):
+    def calculation_xiangting(self, comp=False):
         ts = self.ts_init()
         self.preprocessing_mytiles()
         # 数牌
@@ -297,7 +437,12 @@ class FourSetsOnePair(object):
         for i in range(3):
             kazuhai.append(self.mytiles[i].copy())
         # r_ts = self.dfs2(self.mytiles[0:3].copy()).copy() なぜか参照渡しになる
-        r_ts = self.dfs2(kazuhai).copy()
+        if comp == False:
+            r_ts = self.dfs2(kazuhai).copy()
+        else:
+            self.memo = {}
+            self.call_dfs = 0
+            r_ts = self.dfs3(kazuhai).copy()
         # print("r_ts: ", r_ts)
         for key, value in r_ts.items():
             ts[key] += value

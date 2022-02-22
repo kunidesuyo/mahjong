@@ -17,7 +17,6 @@ def calculate_number_of_xiangting(mytiles):
     xiangting = {}
     four_sets_one_pair = FourSetsOnePair(mytiles)
     xiangting["four_sets_one_pair"] = four_sets_one_pair.calculation_xiangting()
-    # print(len(four_sets_one_pair.memo))
     seven_pairs = SevenPairs(mytiles)
     xiangting["seven_pairs"] = seven_pairs.calculation_xiangting()
     thirteen_orphans = ThirteenOrphans(mytiles)
