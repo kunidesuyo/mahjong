@@ -4,7 +4,6 @@ class ThirteenOrphans(object):
         self.mytiles = mytiles
 
     def calculation_xiangting(self):
-        print(self.mytiles)
         pair = False
         yaochu = 0
         for i in range(4):

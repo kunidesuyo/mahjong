@@ -257,12 +257,116 @@ def init_hand():
     # 計算結果を出力する(ファイル名に日時を使って重複を避ける)
 
 
-def main():
+def output_win_hand():
+    '''
+    清一色のアガリ手をファイル出力する
+    '''
     init = [0 for x in range(9)]
     create_win_hand_same_color(init, 0, 0)
-    print(len(win_hand))
+    global win_hand
+    win_hand = sorted(win_hand)
+    c = 0
+    while c+1 < len(win_hand):
+        if win_hand[c] == win_hand[c+1]:
+            del win_hand[c+1]
+        else:
+            c += 1
+
+    ch = {'0': 'm', '1': 'p', '2': 's', '3': 'z'}
+
+    with open("test_data\\win_hand.txt", 'w') as f:
+        count = 0
+        for hand in win_hand:
+            output_hand = []
+            output_hand.append(hand.copy())
+            a = [0 for _ in range(9)]
+            b = [0 for _ in range(7)]
+            output_hand.append(a.copy())
+            output_hand.append(a.copy())
+            output_hand.append(b.copy())
+            # ファイルに書き込み
+            for i in range(4):
+                for j in range(len(output_hand[i])):
+                    num = output_hand[i][j]
+                    if num > 0:
+                        for _ in range(num):
+                            f.write(str(j+1))
+                            f.write(str(ch[str(i)]))
+            f.write(" ")
+            f.write(str(-1))
+            f.write("\n")
+            count += 1
+
+
+def convert_mytiles(input_tiles):
+    ret = init_hand()
+    if len(input_tiles) != 13*2 and len(input_tiles) != 14*2:
+        print("invalid input")
+        exit()
+
+    ch = {'m': 0, 'p': 1, 's': 2, 'z': 3}
+
+    for i in range(len(input_tiles)//2):
+        num = int(input_tiles[2*i]) - 1
+        c = ch[input_tiles[2*i+1]]
+        ret[c][num] += 1
+
+    return ret
+
+
+def testing_win_hand():
+
+    incorrect_data = []
+    total_time = 0
+    max_time = 0
+    min_time = 1000000
+    n_data = 0
+    n_incorrect = 0
+
+    with open("test_data\\win_hand.txt", 'r') as f:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            input_tiles, true_v = line.split()
+            true_v = int(true_v)
+            now_hand = convert_mytiles(input_tiles)
+            n_data += 1
+
+            start = time.time()
+            xia = calculate_number_of_xiangting(now_hand)
+            end = time.time()
+            t = end - start
+            total_time += t
+            max_time = max(max_time, t)
+            min_time = min(min_time, t)
+            result = 20
+            for key, value in xia.items():
+                result = min(result, value)
+            if result != true_v:
+                n_incorrect += 1
+                incorrect_data.append(input_tiles)       
+
+            # if n_data == 100:
+            #     break
+
+            if n_data % 100 == 0:
+                print(n_data)
+
     
-    #minimum_test()
+    print("n_data: ", n_data)
+    print("total time: ", total_time, "s")
+    print("average time: ", total_time / n_data, "s")
+    print("max time: ", max_time, "s")
+    print("min time: ", min_time, "s")
+    print("incorrect data: ", n_incorrect)
+    for x in incorrect_data:
+        print(x)
+
+
+
+def main():
+    testing_win_hand()
 
 if __name__ == '__main__':
     main()

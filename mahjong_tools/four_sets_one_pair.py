@@ -455,6 +455,6 @@ class FourSetsOnePair(object):
         # print(ts)
         # print(self.mytiles)
         # print(ts)
-        print("call dfs: ", self.call_dfs)
+        # print("call dfs: ", self.call_dfs)
         return self.xiangting_from_ts(ts)
 
