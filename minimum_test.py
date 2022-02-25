@@ -1,3 +1,4 @@
+from sympy import comp
 from mahjong_tools import four_sets_one_pair
 from mahjong_tools.xiangting import calculate_number_of_xiangting
 import time
@@ -139,13 +140,129 @@ def minimum_test():
     else:
         for ff in incorrect_data:
             print(ff)
+
+
+win_hand = []
+
+def encode_index(num):
+    '''
+    0~8 (0, 0~8)
+    9~17 (1, 0~8)
+    18~26 (2, 0~8)
+    27~33 (3, 0~6)
+    '''
+    i = 0
+    j = 0
+    if num <= 26:
+        j = num % 9
+        i = num // 9
+    else:
+        num -= 27
+        j = num % 7
+        i = 3
+    return [i, j]
+
+
+def decode_index(ij):
+    i, j = ij
+    num = 0
+    if i == 3:
+        num = 27
+        num += j
+    else:
+        num = 9 * i + j
+    return num
+
+
+def create_win_hand(now_hand, start=0, n_mentu=0):
+    # 処理重い
+    if n_mentu == 4:
+        for i in range(9*3+7):
+            x, y = encode_index(i)
+            completed_hand = []
+            for j in range(4):
+                completed_hand.append(now_hand[j].copy())
+            completed_hand[x][y] += 2
+            if completed_hand[x][y] <= 4:
+                win_hand.append(completed_hand)
+        return
+
+    for i in range(start, 9*3+7):
+        # 順子
+        next_hand = []
+        for x in range(4):
+            next_hand.append(now_hand[x].copy())
+        x, y = encode_index(i)
+        if x < 3 and y+2 < 9:
+            go = True
+            for dy in range(3):
+                next_hand[x][y+dy] += 1
+                if next_hand[x][y+dy] > 4:
+                    go = False
+            if go == True:
+                create_win_hand(next_hand, start, n_mentu+1)
+        # 刻子
+        next_hand = []
+        for x in range(4):
+            next_hand.append(now_hand[x].copy())
+        x, y = encode_index(i)
+        go = True
+        next_hand[x][y] += 3
+        if next_hand[x][y] > 4:
+            go = False
+        if go == True:
+            create_win_hand(next_hand, start, n_mentu+1)
+
+
+def create_win_hand_same_color(now_hand, start=0, n_mentu=0):
+    if n_mentu == 4:
+        for i in range(9):
+            completed_hand = now_hand.copy()
+            completed_hand[i] += 2
+            if completed_hand[i] <= 4:
+                win_hand.append(completed_hand)
+        return
+
+    for i in range(start, 9):
+        # 順子
+        next_hand = now_hand.copy()
+        go = True
+        if i + 2 < 9:
+            for di in range(3):
+                next_hand[i+di] += 1
+                if next_hand[i+di] > 4:
+                    go = False
+            if go == True:
+                create_win_hand_same_color(next_hand.copy(), start, n_mentu+1)
+        # 刻子
+        next_hand = now_hand.copy()
+        go = True
+        next_hand[i] += 3
+        if next_hand[i] > 4:
+            go = False
+        if go == True:
+            create_win_hand_same_color(next_hand.copy(), start, n_mentu+1)
+
+
             
-    # テンパイの手牌を生成
+def init_hand():
+    a = [0 for x in range(9)]
+    b = [0 for x in range(7)]
+    ret = []
+    for i in range(3):
+        ret.append(a.copy())
+    ret.append(b.copy())
+    return ret
 
     # 計算結果を出力する(ファイル名に日時を使って重複を避ける)
 
+
 def main():
-    minimum_test()
+    init = [0 for x in range(9)]
+    create_win_hand_same_color(init, 0, 0)
+    print(len(win_hand))
+    
+    #minimum_test()
 
 if __name__ == '__main__':
     main()
